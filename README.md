@@ -41,7 +41,8 @@ graph TD
     MoveGroup -->|Joint Trajectory| Controller[Ros2 Control / Gazebo]
     Controller -->|控制指令| Robot[仿真机器人]
     style User fill:#f9f,stroke:#333,stroke-width:2px
-    style Robot fill:#bbf,stroke:#333,stroke-width:2px```
+    style Robot fill:#bbf,stroke:#333,stroke-width:2px
+```
 
 
 🛠️ 安装指南
