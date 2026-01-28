@@ -31,7 +31,7 @@
 
 ---
 
-## 🏗️ 系统架构
+## 🏗️ 2. 系统架构
 
 ```mermaid
 graph TD
@@ -39,9 +39,9 @@ graph TD
     VR_Bridge -->|/vr_target_pose| Planner[Robot Planner Node]
     Planner -->|MoveIt Action| MoveGroup[MoveIt 2 MoveGroup]
     MoveGroup -->|Joint Trajectory| Controller[Ros2 Control / Gazebo]
-    Controller -->|物理反馈| Robot[仿真机器人]
+    Controller -->|控制指令| Robot[仿真机器人]
     style User fill:#f9f,stroke:#333,stroke-width:2px
-    style Robot fill:#bbf,stroke:#333,stroke-width:2px
+    style Robot fill:#bbf,stroke:#333,stroke-width:2px```
 
 
 🛠️ 安装指南
