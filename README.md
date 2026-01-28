@@ -53,7 +53,7 @@ ROS: ROS 2 Humble Hawksbill
 
 安装必要的 ROS 功能包：
 
-Bash
+```Bash
 
 sudo apt update
 sudo apt install ros-humble-moveit \
@@ -63,9 +63,11 @@ sudo apt install ros-humble-moveit \
                  ros-humble-xacro \
                  ros-humble-joint-state-publisher-gui \
                  git-lfs
+```
 2. 克隆与编译
 ⚠️ 重要：本项目包含大型 3D 模型文件，必须使用 Git LFS。
 
+```
 Bash
 
 # 1. 初始化 Git LFS
@@ -82,7 +84,8 @@ colcon build
 source install/setup.bash
 🚀 快速启动 (Quick Start)
 请按照以下顺序在不同的终端窗口中运行指令。
-
+```
+```
 Step 1: 启动仿真环境 (Core)
 启动 Gazebo 物理引擎、加载机器人模型、MoveIt 2 规划框架以及 RViz 可视化界面。
 
@@ -121,6 +124,8 @@ src/
 │
 ├── 🚗 ranger_mini_v2_description/      # [底盘] AgileX Ranger Mini 描述
 └── 🔌 four_wheel_steering_controller/  # [插件] 四轮转向控制器
+
+```
 🔧 常见问题 (FAQ)
 
 </details>
