@@ -1,0 +1,23 @@
+# 1. 声明使用 SimpleControllerManager
+moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+
+# 2. 定义控制器列表 (注意层级缩进!)
+moveit_simple_controller_manager:
+  controller_names:
+    - franka_arm_controller
+    # - ranger_base_controller (如果你也想控制底盘，稍后再加)
+
+  # 3. 详细配置每个控制器
+  franka_arm_controller:
+    # 这里的名字必须和 Gazebo 控制器也就是 ros2_controllers.yaml 里的名字完全一致
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - fr3_joint1
+      - fr3_joint2
+      - fr3_joint3
+      - fr3_joint4
+      - fr3_joint5
+      - fr3_joint6
+      - fr3_joint7

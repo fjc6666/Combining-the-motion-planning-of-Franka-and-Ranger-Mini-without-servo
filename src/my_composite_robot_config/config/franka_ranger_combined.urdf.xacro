@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="franka_ranger_combined">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import franka_ranger_combined urdf file -->
+    <xacro:include filename="$(find composite_robot_description)/urdf/mobile_manipulator.urdf.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="franka_ranger_combined.ros2_control.xacro" />
+
+
+    <xacro:franka_ranger_combined_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

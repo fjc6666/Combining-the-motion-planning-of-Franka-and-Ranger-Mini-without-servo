@@ -1,0 +1,100 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # 控制频率 Hz (建议高一点，1000Hz 比较适合机械臂仿真)
+
+    # -------------------------------------------------------------------------
+    # 1. 关节状态广播器 (必选)
+    # 负责把所有关节的角度发布到 /joint_states 话题，供 robot_state_publisher 使用
+    # -------------------------------------------------------------------------
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    # -------------------------------------------------------------------------
+    # 2. Franka 机械臂控制器 (核心)
+    # 使用关节轨迹控制器，支持 MoveIt 的 FollowJointTrajectory 接口
+    # -------------------------------------------------------------------------
+    franka_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+    # -------------------------------------------------------------------------
+    # 3. Ranger 底盘控制器
+    # -------------------------------------------------------------------------
+    ranger_base_controller:
+      type: diff_drive_controller/DiffDriveController
+
+    # -------------------------------------------------------------------------
+    # 4. (可选) 夹爪控制器
+    # 如果你也想在 Gazebo 里控制夹爪开合，可以把这个加上
+    # -------------------------------------------------------------------------
+    franka_hand_controller:
+      type: position_controllers/GripperActionController
+
+
+# =============================================================================
+# 详细参数配置区
+# =============================================================================
+
+franka_arm_controller:
+  ros__parameters:
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    joints:
+      - fr3_joint1
+      - fr3_joint2
+      - fr3_joint3
+      - fr3_joint4
+      - fr3_joint5
+      - fr3_joint6
+      - fr3_joint7
+    
+    state_publish_rate: 100.0
+    action_monitor_rate: 20.0
+    
+    # 【关键修改！】仿真必须要有 PID 参数，否则机械臂会软塌塌
+    # P (Proportional): 刚度，值越大越硬
+    # D (Derivative): 阻尼，防止抖动
+    gains:
+      fr3_joint1: {p: 600.0, i: 0.0, d: 30.0}
+      fr3_joint2: {p: 600.0, i: 0.0, d: 30.0}
+      fr3_joint3: {p: 600.0, i: 0.0, d: 30.0}
+      fr3_joint4: {p: 600.0, i: 0.0, d: 30.0}
+      fr3_joint5: {p: 250.0, i: 0.0, d: 10.0}
+      fr3_joint6: {p: 150.0, i: 0.0, d: 10.0}
+      fr3_joint7: {p: 50.0,  i: 0.0, d: 5.0}
+
+
+ranger_base_controller:
+  ros__parameters:
+    # 这里的关节名必须和你 URDF (ranger_mini_v2) 里的名字完全一致
+    left_wheel_names: ["front_left_wheel_joint", "rear_left_wheel_joint"]
+    right_wheel_names: ["front_right_wheel_joint", "rear_right_wheel_joint"]
+    
+    wheel_separation: 0.46  # 左右轮间距 (米)
+    wheel_radius: 0.08      # 轮子半径 (米)
+    
+    # 里程计配置
+    wheel_separation_multiplier: 1.0
+    left_wheel_radius_multiplier: 1.0
+    right_wheel_radius_multiplier: 1.0
+    
+    publish_rate: 50.0
+    odom_frame_id: odom
+    base_frame_id: base_footprint
+    pose_covariance_diagonal : [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+    twist_covariance_diagonal: [0.001, 0.001, 0.001, 0.001, 0.001, 0.01]
+
+    open_loop: true
+    enable_odom_tf: true
+
+    cmd_vel_timeout: 0.5
+    use_stamped_vel: false
+
+# (可选) 夹爪详细配置
+franka_hand_controller:
+  ros__parameters:
+    joint: fr3_finger_joint1 # 主动关节
+    # 这里的目标通常是 gap 距离，或者 mimic joint 的逻辑
+    # 如果是简单的 position control，通常不需要太多 PID

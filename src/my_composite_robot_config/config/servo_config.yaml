@@ -1,0 +1,19 @@
+moveit_servo:
+  # 核心设置
+  use_gazebo: true
+  command_in_type: "speed_units" # 或者 "unitless"
+  scale:
+    linear:  0.4  # 线速度比例
+    rotational: 0.3 # 角速度比例
+
+  # 输入话题 (VR发出的指令)
+  cartesian_command_in_topic: ~/delta_twist_cmds  # 速度指令
+  joint_command_in_topic: ~/delta_joint_cmds      # 关节指令
+
+  # 输出 (发给Gazebo)
+  command_out_topic: /franka_arm_controller/joint_trajectory # 注意：Servo通常输出轨迹流
+  command_out_type: std_msgs/Float64MultiArray # 或者 trajectory_msgs/JointTrajectory
+
+  # 碰撞检测
+  check_collisions: true
+  collision_check_rate: 10.0
