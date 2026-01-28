@@ -27,6 +27,7 @@
 | **🦾 高精度仿真** | 完整的 TF 树校准 (Base -> Franka)，集成四轮转向动力学。 |
 | **🧠 运动规划** | 基于 **MoveIt 2** (OMPL)，配置完整的碰撞矩阵 (ACM) 与 SRDF，支持 RViz 交互。 |
 | **🎮 VR 遥操作** | (Beta) 预留 VR 数据桥接节点 `vr_bridge`，集成笛卡尔空间规划器。 |
+<img width="1770" height="973" alt="图片" src="https://github.com/user-attachments/assets/8a25e82a-1616-4497-8097-86767756648d" />
 
 ---
 
@@ -74,7 +75,7 @@ git clone [https://github.com/fjc6666/Combining-the-motion-planning-of-Franka-an
 cd Combining-the-motion-planning-of-Franka-and-Ranger-Mini-without-servo
 
 # 3. 编译工作空间
-colcon build --symlink-install
+colcon build 
 
 # 4. 配置环境变量
 source install/setup.bash
