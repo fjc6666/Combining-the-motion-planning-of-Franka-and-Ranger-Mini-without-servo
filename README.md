@@ -24,7 +24,7 @@
 
 | 模块 | 特性描述 |
 | :--- | :--- |
-| **🦾 高精度仿真** | 完整的 TF 树校准 (Base -> Franka)，集成四轮转向动力学，解决“溜车”问题。 |
+| **🦾 高精度仿真** | 完整的 TF 树校准 (Base -> Franka)，集成四轮转向动力学。 |
 | **🧠 运动规划** | 基于 **MoveIt 2** (OMPL)，配置完整的碰撞矩阵 (ACM) 与 SRDF，支持 RViz 交互。 |
 | **🎮 VR 遥操作** | (Beta) 预留 VR 数据桥接节点 `vr_bridge`，集成笛卡尔空间规划器。 |
 
@@ -41,7 +41,7 @@ graph TD
     Controller -->|物理反馈| Robot[仿真机器人]
     style User fill:#f9f,stroke:#333,stroke-width:2px
     style Robot fill:#bbf,stroke:#333,stroke-width:2px
-注意：GitHub 原生支持 Mermaid 流程图渲染。
+
 
 🛠️ 安装指南
 1. 环境依赖
@@ -120,9 +120,6 @@ src/
 ├── 🚗 ranger_mini_v2_description/      # [底盘] AgileX Ranger Mini 描述
 └── 🔌 four_wheel_steering_controller/  # [插件] 四轮转向控制器
 🔧 常见问题 (FAQ)
-<details> <summary><strong>Q1: Gazebo 中机器人一直在缓慢滑动 (溜车)？</strong></summary>
-
-A: 这是物理仿真中底盘摩擦力不足导致的。我们在 bringup_gazebo.launch.py 中强制加载了底盘控制器以锁定轮子，请确保终端中 ranger_base_controller 启动成功。
 
 </details>
 
@@ -150,5 +147,6 @@ A: 请检查 moveit_controllers.yaml 中的缩进是否正确。MoveIt 需要正
 <div align="center">
 
 Maintainer: fjc6666
+email:fjc66666@outlook.com
 
 </div>
