@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<robot name="franka_ranger_combined" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:include filename="$(find ranger_mini_v2_description)/urdf/include/ranger_mini_v2/components.urdf" />
+    <xacro:include filename="$(find ranger_mini_v2_description)/urdf/include/ranger_mini_v2/ros2_control.urdf" />
+    
+    <xacro:include filename="$(find composite_robot_description)/urdf/franka_arm.xacro"/>
+    <xacro:include filename="$(find franka_description)/end_effectors/common/utils.xacro"/>
+    <xacro:include filename="$(find franka_description)/end_effectors/common/franka_hand.xacro"/>
+    
+    <xacro:property name="hand_inertials" value="${xacro.load_yaml('$(find franka_description)/end_effectors/franka_hand/inertials.yaml')}"/>
+    
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+    </joint>
+
+    <xacro:robot_base link_name="base_link"/>
+
+    <xacro:wheel_assembly_a prefix="front_left_wheel" parent_link="base_link" x="0.23" y="0.206" z="-0.1" roll="0" pitch="0" yaw="0"/>
+    <xacro:wheel_assembly_b prefix="front_right_wheel" parent_link="base_link" x="0.23" y="-0.206" z="-0.1" roll="0" pitch="0" yaw="0"/>
+    <xacro:wheel_assembly_b prefix="rear_left_wheel" parent_link="base_link" x="-0.23" y="0.206" z="-0.1" roll="0" pitch="0" yaw="3.14159"/>
+    <xacro:wheel_assembly_a prefix="rear_right_wheel" parent_link="base_link" x="-0.23" y="-0.206" z="-0.1" roll="0" pitch="0" yaw="3.14159"/>
+
+    <xacro:franka_arm parent_link="base_link" xyz="0.0 0 0.00" rpy="0 0 0" />
+
+    <xacro:franka_hand connected_to="fr3_link8" safety_distance="0.03"  ee_id="franka_hand_white" ee_inertials="${hand_inertials}" robot_type="fr3"/>
+
+    
+    
+    <ros2_control name="FrankaHandFakeSystem" type="system">
+        <hardware>
+            <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+        </hardware>
+        
+        <joint name="fr3_finger_joint1">
+            <command_interface name="position"/>
+            <state_interface name="position">
+              <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+        </joint>
+        
+        <joint name="fr3_finger_joint2">
+            <command_interface name="position"/>
+            <state_interface name="position">
+              <param name="initial_value">0.0</param>
+            </state_interface>
+            <state_interface name="velocity"/>
+        </joint>
+    
+    </ros2_control>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <gazebo>
+        <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+           <parameters>$(find composite_robot_description)/config/controllers.yaml</parameters>
+        </plugin>
+    </gazebo>
+
+</robot>

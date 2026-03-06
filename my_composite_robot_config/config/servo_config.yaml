@@ -1,0 +1,36 @@
+###############################################
+# MoveIt Servo 核心配置
+###############################################
+moveit_servo:
+  # 1. 基础设置
+  use_gazebo: true  # 我们在仿真
+  
+  # 2. 话题接口
+  # 输入：你的 robot_planner 即将发布的话题
+  cartesian_command_in_topic: ~/delta_twist_cmds
+  joint_command_in_topic: ~/delta_joint_cmds
+  
+  # 输出：发给 Gazebo 控制器的话题 (这是关键！必须对应你的 controllers.yaml)
+  command_out_topic: /franka_arm_controller/joint_trajectory
+  command_out_type: trajectory_msgs/JointTrajectory
+  
+  # 状态反馈
+  status_topic: ~/status
+  
+  # 3. 机器人参数
+  move_group_name: franka_arm  # 你的规划组名字
+  planning_frame: base_footprint # 所有的速度指令都是相对于这个坐标系的
+  ee_frame_name: fr3_hand_tcp    # 你的末端执行器名字 (请确认 TF 树里是不是叫这个)
+  robot_link_command_frame: base_footprint
+  
+  # 4. 速度限制与平滑
+  linear_scale: 0.4      # 线速度比例 (太快容易飞)
+  rotational_scale: 0.2  # 角速度比例
+  low_pass_filter_coeff: 2.0  # 低通滤波，数值越小越平滑但延迟越高
+
+  # 5. 碰撞检测 (安全第一)
+  check_collisions: true
+  collision_check_rate: 10.0 # Hz
+  # 当离障碍物多远时开始减速停止 (单位：米)
+  self_collision_proximity_threshold: 0.01
+  scene_collision_proximity_threshold: 0.02
