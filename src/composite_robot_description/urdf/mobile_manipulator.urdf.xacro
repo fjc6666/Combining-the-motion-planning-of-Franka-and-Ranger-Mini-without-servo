@@ -27,7 +27,7 @@
 
     <xacro:franka_arm parent_link="base_link" xyz="0.0 0 0.00" rpy="0 0 0" />
 
-    <xacro:franka_hand connected_to="fr3_link8" safety_distance="0.03"  ee_id="franka_hand_white" ee_inertials="${hand_inertials}" robot_type="fr3"/>
+    <xacro:franka_hand connected_to="fr3_link8" safety_distance="0.03" ee_id="franka_hand_white" ee_inertials="${hand_inertials}" arm_id="fr3"/>
 
     
     

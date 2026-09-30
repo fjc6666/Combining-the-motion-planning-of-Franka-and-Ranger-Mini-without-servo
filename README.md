@@ -5,7 +5,9 @@
 
 > **Scope:** This repository contains the combined robot model, Gazebo integration, controllers, and MoveIt configuration. Experimental pose publishing and planning live in the separate [vr_vision_teleop](https://github.com/fjc6666/vr_vision_teleop) repository. This integration uses plan and execute; MoveIt Servo is not implemented here.
 
-![Combined mobile manipulator in simulation](https://github.com/user-attachments/assets/8a25e82a-1616-4497-8097-86767756648d)
+![Franka arm mounted on Ranger Mini V2, rendered from the live ROS 2 robot description](docs/images/franka-ranger-model.png)
+
+*Combined robot model in RViz, captured after launching the repository's ROS 2 workspace.*
 
 ## At a glance
 
@@ -29,6 +31,10 @@ flowchart LR
 
 The main entry point is [bringup_gazebo.launch.py](src/my_composite_robot_config/launch/bringup_gazebo.launch.py). It starts Gazebo, spawns the model, loads controllers, then starts move_group and RViz. [moveit_controllers.yaml](src/my_composite_robot_config/config/moveit_controllers.yaml) maps the arm trajectory action to seven FR3 joints.
 
+![Franka arm and Ranger Mini base in the MoveIt RViz planning interface](docs/images/franka-ranger-moveit-rviz.png)
+
+*MoveIt planning interface from the integrated launch, with the `franka_arm` group available.*
+
 ## Quick start
 
 **Target environment:** Ubuntu 22.04 and ROS 2 Humble, with Gazebo Classic, MoveIt 2, ros2_control, Xacro, rosdep, and colcon. Other ROS distributions are unverified.
@@ -50,7 +56,7 @@ source install/setup.bash
 ros2 launch my_composite_robot_config bringup_gazebo.launch.py
 ```
 
-In RViz, select the arm planning group and use **Plan & Execute**. The integrated launch file is the source of truth for started nodes.
+In RViz, select the `franka_arm` planning group and use **Plan & Execute**.
 
 ## Repository map
 
@@ -68,9 +74,8 @@ In RViz, select the arm planning group and use **Plan & Execute**. The integrate
 - MoveIt sends arm trajectories to the Franka controller. Base control is separate; this is not whole-body planning.
 - Large DAE meshes use Git LFS; install LFS before cloning.
 - Upstream robot descriptions and controller code are included alongside the integration work.
+- The Franka Hand Xacro invocation uses the `arm_id` parameter expected by the ROS 2 Humble Franka description installed with this setup.
 
 ## 中文简介
 
 本仓库将 Franka 机械臂与 Ranger Mini V2 底盘组合为一个 ROS 2 仿真模型，配置 Gazebo Classic、ros2_control 与 MoveIt 2，并提供集成启动入口。重点是**模型、控制器和规划环境的系统集成**。目前机械臂使用轨迹规划执行，底盘控制与机械臂规划分开；VR 实验代码位于独立仓库。
-
-**面试展示建议：** Xacro 模型组合、Gazebo 控制器加载顺序、MoveIt 与轨迹控制器的接口配置，以及 RViz 中的 Plan & Execute。
