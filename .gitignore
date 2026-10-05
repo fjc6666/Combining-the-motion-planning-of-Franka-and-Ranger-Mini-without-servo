@@ -1,0 +1,13 @@
+# ROS workspace build and runtime artifacts
+build/
+install/
+log/
+
+# Python cache and local environment files
+__pycache__/
+*.py[cod]
+.env
+.venv/
+
+# Local assistant session state
+.antigravitycli/

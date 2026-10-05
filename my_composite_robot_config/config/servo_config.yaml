@@ -1,36 +1,48 @@
 ###############################################
-# MoveIt Servo 核心配置
+# MoveIt Servo 核心配置文件
+# 该文件定义了笛卡尔空间速度如何转换为各个关节的控制信号
 ###############################################
 moveit_servo:
-  # 1. 基础设置
-  use_gazebo: true  # 我们在仿真
+  # 1. 基础环境设置
+  use_gazebo: true  # 设为 true 时，Servo 会使用 ROS 的模拟时间 (use_sim_time)
   
-  # 2. 话题接口
-  # 输入：你的 robot_planner 即将发布的话题
+  # 【频率与安全机制】
+  publish_period: 0.01  # 下发给底层控制器的频率，0.01秒 = 100Hz。(应与控制器接收频率匹配)
+  incoming_command_timeout: 0.2   # 看门狗超时时间。如果 0.2 秒内没收到新的 Twist 指令，Servo 会立刻让机械臂急停，防止失控。
+  
+  # 【场景监听】
+  # 设为 true 允许 Servo 独立监听机器人的关节状态和 TF，更新其内部的避障场景
+  is_primary_planning_scene_monitor: true 
+  publish_joint_positions: true       # 在输出的轨迹消息中包含关节位置
+  publish_joint_velocities: true      # 在输出的轨迹消息中包含关节速度
+  publish_joint_accelerations: false  # 是否包含加速度（取决于底层硬件是否支持）
+
+  # 2. 话题接口 (Topic Interfaces)
+  # 输入：从我们自己写的 C++ 节点接收的笛卡尔空间速度指令
   cartesian_command_in_topic: ~/delta_twist_cmds
+  # 输入：接收关节空间速度指令（本项目中暂未使用）
   joint_command_in_topic: ~/delta_joint_cmds
   
-  # 输出：发给 Gazebo 控制器的话题 (这是关键！必须对应你的 controllers.yaml)
+  # 输出：经过逆运动学计算后，发给底层 ros2_control 或 Gazebo 控制器的轨迹指令
+  # 【注意】这个话题必须和你的 ros2_controllers.yaml 中配置的执行话题绝对一致！
   command_out_topic: /franka_arm_controller/joint_trajectory
   command_out_type: trajectory_msgs/JointTrajectory
+  status_topic: ~/status # 输出 Servo 的当前状态（正常、接近奇异点、即将碰撞等）
   
-  # 状态反馈
-  status_topic: ~/status
+  # 3. 机器人运动学参数
+  move_group_name: franka_arm      # SRDF 中定义的机械臂规划组名称
+  planning_frame: base_footprint   # 运动规划的全局绝对参考系
+  ee_frame_name: fr3_hand_tcp      # 运动学逆解求解的目标点（即我们想要控制的 TCP 末端点）
+  robot_link_command_frame: base_footprint # 输入的 Twist 速度指令是基于哪个坐标系的
   
-  # 3. 机器人参数
-  move_group_name: franka_arm  # 你的规划组名字
-  planning_frame: base_footprint # 所有的速度指令都是相对于这个坐标系的
-  ee_frame_name: fr3_hand_tcp    # 你的末端执行器名字 (请确认 TF 树里是不是叫这个)
-  robot_link_command_frame: base_footprint
-  
-  # 4. 速度限制与平滑
-  linear_scale: 0.4      # 线速度比例 (太快容易飞)
-  rotational_scale: 0.2  # 角速度比例
-  low_pass_filter_coeff: 2.0  # 低通滤波，数值越小越平滑但延迟越高
+  # 4. 速度限制与平滑处理
+  # 缩放系数：如果输入的速度是 1.0，实际执行会被限制为 1.0 * scale
+  linear_scale: 0.4        # 线速度比例（调小一点防止机械臂在 VR 挥动时运动过猛）
+  rotational_scale: 0.2    # 角速度比例
+  low_pass_filter_coeff: 2.0  # 低通滤波系数。数值越小，动作越平滑（像太极），但跟随延迟越大；数值越大，反应越快，但容易抖动。
 
-  # 5. 碰撞检测 (安全第一)
-  check_collisions: true
-  collision_check_rate: 10.0 # Hz
-  # 当离障碍物多远时开始减速停止 (单位：米)
-  self_collision_proximity_threshold: 0.01
-  scene_collision_proximity_threshold: 0.02
+  # 5. 自主避障与碰撞检测 (非常消耗 CPU，但在真实硬件上极其重要)
+  check_collisions: true      # 开启实时防碰撞计算
+  collision_check_rate: 10.0  # 碰撞检测频率 (Hz)。不用设太高，10Hz 一般够用。
+  collision_distance_safety_factor: 10.0 # 碰撞惩罚距离系数（距离障碍物越近，自动降速越明显）
+  min_allowable_collision_distance: 0.05   # 最小允许距离。一旦距离障碍物(或底盘)小于 5cm，机械臂强制刹停。
